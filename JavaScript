@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <input type="password" id="inputSenha" placeholder="Digite sua senha" style="width:100%; padding:8px; margin:6px 0 4px; border:2px solid maroon; border-radius:5px; box-sizing:border-box;">
             <p id="erroSenha" style="color:red; font-size:12px; margin:0 0 8px;"></p>
             <p id="erroGeral" style="color:red; text-align:center; font-size:13px;"></p>
-            <button onclick="confirmarFormulario()" style="width:100%; padding:10px; background:maroon; color:beige; border:2px solid whitesmoke; border-radius:5px; font-family:'Luckiest Guy',cursive; font-size:16px; cursor:pointer;">Confirmar</button>
+            <button onclick="confirmarFormulario()" style="width:100%; padding:10px; background:maroon; color:beige; border:2px solid whitesmoke; border-radius:5px; font-family:'Luckiest Guy',cursive; cursor:pointer; font-size:14px;">Confirmar</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -84,6 +84,16 @@ document.addEventListener("DOMContentLoaded", function () {
         <p>⭐ Todo domingo: 20% OFF em qualquer lanche!</p>
     `;
     document.body.appendChild(secaoPromo);
+
+    // --- C. EVENTO DE CLICK GLOBAL (DENTRO DO DOMContentLoaded) ---
+    // Oculta o menu ao clicar fora dele
+    document.addEventListener("click", function (e) {
+        var menuDiv = document.getElementById("menuHamburguer");
+        var menuNav = document.getElementById("menuNav");
+        if (menuDiv && menuNav && !menuDiv.contains(e.target) && menuNav.style.display === "block") {
+            menuNav.style.display = "none";
+        }
+    });
 });
 
 
@@ -148,6 +158,11 @@ function confirmarFormulario() {
             erroG.textContent = "❌ Usuário ou senha incorretos!";
         }
     } else if (modoAtual === "cadastro") {
+        // Validação de senha melhorada
+        if (usuario.length < 3) {
+            erroU.textContent = "⚠ O usuário deve ter pelo menos 3 caracteres!";
+            return;
+        }
         if (senha.length < 4) {
             erroS.textContent = "⚠ A senha deve ter pelo menos 4 caracteres!";
             return;
@@ -166,15 +181,6 @@ function toggleMenu() {
         menu.style.display = (menu.style.display === "none") ? "block" : "none";
     }
 }
-
-// Oculta o menu ao clicar fora dele
-document.addEventListener("click", function (e) {
-    var menuDiv = document.getElementById("menuHamburguer");
-    var menuNav = document.getElementById("menuNav");
-    if (menuDiv && menuNav && !menuDiv.contains(e.target) && menuNav.style.display === "block") {
-        menuNav.style.display = "none";
-    }
-});
 
 function irPara(id) {
     var elemento = document.getElementById(id);
