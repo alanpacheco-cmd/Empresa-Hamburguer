@@ -1,116 +1,107 @@
-// --- 1. CONFIGURAÇÕES E VARIÁVEIS GLOBAIS ---
+// --- 1. CONFIGURAÇÕES GLOBAIS ---
 var usuarioCorreto = "admin";
 var senhaCorreta = "1234";
-var modoAtual = ""; // Controla se o modal é Login ou Cadastro
+var modoAtual = "";
 
-// --- 2. CRIAÇÃO DOS ELEMENTOS DINÂMICOS (CSS e HTML) ---
+// --- 2. GARANTIR QUE TUDO CARREGUE NA HORA CERTA ---
+document.addEventListener("DOMContentLoaded", function () {
 
-// Estilos Gerais (Links do Menu e Promoção)
-var estiloGeral = document.createElement("style");
-estiloGeral.textContent = `
-    .link-nav {
-        display: block;
-        color: beige;
-        font-family: 'Luckiest Guy', cursive;
-        font-size: 15px;
-        padding: 6px 8px;
-        cursor: pointer;
-        border-radius: 5px;
+    // Faz os botões da página funcionarem
+    var botoes = document.querySelectorAll(".btn-personalizado");
+    if (botoes.length >= 2) {
+        botoes[0].addEventListener("click", function () { abrirFormulario("login"); });
+        botoes[1].addEventListener("click", function () { abrirFormulario("cadastro"); });
+    } else {
+        console.warn("Aviso: Botões '.btn-personalizado' não encontrados na página.");
     }
-    .link-nav:hover {
-        background: rgba(255,255,255,0.15);
-    }
-    #promo {
-        display: none;
-        background: maroon;
-        border: 2px solid whitesmoke;
-        border-radius: 10px;
-        padding: 20px 40px;
-        margin: 20px auto;
-        max-width: 500px;
-        color: beige;
-        font-family: 'Luckiest Guy', cursive;
-        text-align: center;
-    }
-`;
-document.head.appendChild(estiloGeral);
 
-// Criar o Modal de Login/Cadastro
-var modal = document.createElement("div");
-modal.id = "modal";
-modal.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;";
-modal.innerHTML = `
-    <div style="background: whitesmoke; border: 2px solid maroon; border-radius: 10px; padding: 30px; width: 300px; font-family: 'Luckiest Guy', cursive; position: relative;">
-        <button onclick="fecharModal()" style="position: absolute; top: 8px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; color: maroon;">✕</button>
-        <h2 id="tituloModal" style="color: maroon; text-align: center;"></h2>
-        <label>Usuário:</label><br>
-        <input type="text" id="inputUsuario" placeholder="Digite seu usuário" style="width:100%; padding:8px; margin:6px 0 4px; border:2px solid maroon; border-radius:5px; box-sizing:border-box;">
-        <p id="erroUsuario" style="color:red; font-size:12px; margin:0 0 8px;"></p>
-        <label>Senha:</label><br>
-        <input type="password" id="inputSenha" placeholder="Digite sua senha" style="width:100%; padding:8px; margin:6px 0 4px; border:2px solid maroon; border-radius:5px; box-sizing:border-box;">
-        <p id="erroSenha" style="color:red; font-size:12px; margin:0 0 8px;"></p>
-        <p id="erroGeral" style="color:red; text-align:center; font-size:13px;"></p>
-        <button onclick="confirmarFormulario()" style="width:100%; padding:10px; background:maroon; color:beige; border:2px solid whitesmoke; border-radius:5px; font-family:'Luckiest Guy',cursive; font-size:16px; cursor:pointer;">Confirmar</button>
-    </div>
-`;
-document.body.appendChild(modal);
-
-// Criar Menu Hambúrguer
-var menuHamburguer = document.createElement("div");
-menuHamburguer.id = "menuHamburguer";
-menuHamburguer.style.cssText = "position: fixed; top: 10px; right: 10px; z-index: 8000;";
-menuHamburguer.innerHTML = `
-    <button id="btnHamb" onclick="toggleMenu()" style="background: maroon; color: beige; border: 2px solid whitesmoke; border-radius: 8px; padding: 8px 14px; font-size: 22px; cursor: pointer;">☰</button>
-    <div id="menuNav" style="display: none; background: maroon; border: 2px solid whitesmoke; border-radius: 8px; padding: 10px; margin-top: 5px; width: 180px;">
-        <a onclick="irPara('inicio')"   class="link-nav">🏠 Início</a>
-        <a onclick="irPara('cardapio')" class="link-nav">🍔 Cardápio</a>
-        <a onclick="ativarSecao('promo')"    class="link-nav">✅ Ver Promoções</a>
-        <a onclick="desativarSecao('promo')" class="link-nav">❌ Ocultar Promoções</a>
-    </div>
-`;
-document.body.appendChild(menuHamburguer);
-
-// Criar Seção de Promoções
-var secaoPromo = document.createElement("div");
-secaoPromo.id = "promo";
-secaoPromo.innerHTML = `
-    <h2>🎉 Promoções da Semana!</h2>
-    <p>🍔 Compre 2 X-Burguer e leve 3!</p>
-    <p>🧃 Combo X-Salada + Suco por R$ 35,00</p>
-    <p>⭐ Todo domingo: 20% OFF em qualquer lanche!</p>
-`;
-document.body.appendChild(secaoPromo);
-
-// --- 3. LÓGICA E EVENTOS ---
-
-// Configurar âncoras de scroll ao carregar
-window.addEventListener("load", function () {
+    // Adiciona IDs nas divs para o scroll do menu funcionar
     var divComeco = document.querySelector(".comeco");
     if (divComeco) divComeco.id = "inicio";
     var divCardapio = document.querySelector(".cardapio");
     if (divCardapio) divCardapio.id = "cardapio";
+
+    // --- CRIAÇÃO DOS ELEMENTOS DINÂMICOS ---
+    
+    // Estilos do menu e promoções
+    var estiloGeral = document.createElement("style");
+    estiloGeral.textContent = `
+        .link-nav { display: block; color: beige; font-family: 'Luckiest Guy', cursive; font-size: 15px; padding: 6px 8px; cursor: pointer; border-radius: 5px; }
+        .link-nav:hover { background: rgba(255,255,255,0.15); }
+        #promo { display: none; background: maroon; border: 2px solid whitesmoke; border-radius: 10px; padding: 20px 40px; margin: 20px auto; max-width: 500px; color: beige; font-family: 'Luckiest Guy', cursive; text-align: center; }
+    `;
+    document.head.appendChild(estiloGeral);
+
+    // Modal de Login e Cadastro
+    var modal = document.createElement("div");
+    modal.id = "modalLanchonete";
+    modal.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;";
+    modal.innerHTML = `
+        <div style="background: whitesmoke; border: 2px solid maroon; border-radius: 10px; padding: 30px; width: 300px; font-family: 'Luckiest Guy', cursive; position: relative;">
+            <button onclick="fecharModal()" style="position: absolute; top: 8px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; color: maroon;">✕</button>
+            <h2 id="tituloModal" style="color: maroon; text-align: center;"></h2>
+            <label>Usuário:</label><br>
+            <input type="text" id="inputUsuario" placeholder="Digite seu usuário" style="width:100%; padding:8px; margin:6px 0 4px; border:2px solid maroon; border-radius:5px; box-sizing:border-box;">
+            <p id="erroUsuario" style="color:red; font-size:12px; margin:0 0 8px;"></p>
+            <label>Senha:</label><br>
+            <input type="password" id="inputSenha" placeholder="Digite sua senha" style="width:100%; padding:8px; margin:6px 0 4px; border:2px solid maroon; border-radius:5px; box-sizing:border-box;">
+            <p id="erroSenha" style="color:red; font-size:12px; margin:0 0 8px;"></p>
+            <p id="erroGeral" style="color:red; text-align:center; font-size:13px;"></p>
+            <button onclick="confirmarFormulario()" style="width:100%; padding:10px; background:maroon; color:beige; border:2px solid whitesmoke; border-radius:5px; font-family:'Luckiest Guy',cursive; font-size:16px; cursor:pointer;">Confirmar</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Menu Hambúrguer
+    var menuHamburguer = document.createElement("div");
+    menuHamburguer.id = "menuHamburguer";
+    menuHamburguer.style.cssText = "position: fixed; top: 10px; right: 10px; z-index: 8000;";
+    menuHamburguer.innerHTML = `
+        <button id="btnHamb" onclick="toggleMenu()" style="background: maroon; color: beige; border: 2px solid whitesmoke; border-radius: 8px; padding: 8px 14px; font-size: 22px; cursor: pointer;">☰</button>
+        <div id="menuNav" style="display: none; background: maroon; border: 2px solid whitesmoke; border-radius: 8px; padding: 10px; margin-top: 5px; width: 180px;">
+            <a onclick="irPara('inicio')" class="link-nav">🏠 Início</a>
+            <a onclick="irPara('cardapio')" class="link-nav">🍔 Cardápio</a>
+            <a onclick="ativarSecao('promo')" class="link-nav">✅ Ver Promoções</a>
+            <a onclick="desativarSecao('promo')" class="link-nav">❌ Ocultar Promoções</a>
+        </div>
+    `;
+    document.body.appendChild(menuHamburguer);
+
+    // Seção de Promoções
+    var secaoPromo = document.createElement("div");
+    secaoPromo.id = "promo";
+    secaoPromo.innerHTML = `
+        <h2>🎉 Promoções da Semana!</h2>
+        <p>🍔 Compre 2 X-Burguer e leve 3!</p>
+        <p>🧃 Combo X-Salada + Suco por R$ 35,00</p>
+        <p>⭐ Todo domingo: 20% OFF em qualquer lanche!</p>
+    `;
+    document.body.appendChild(secaoPromo);
 });
 
-// Eventos dos botões de Login/Cadastro existentes na página
-document.addEventListener("DOMContentLoaded", function() {
-    var botoes = document.querySelectorAll(".btn-personalizado");
-    if(botoes[0]) botoes[0].addEventListener("click", function() { abrirFormulario("login"); });
-    if(botoes[1]) botoes[1].addEventListener("click", function() { abrirFormulario("cadastro"); });
-});
+// --- 3. FUNÇÕES (Lógica do Modal e Navegação) ---
 
-// Funções do Modal
 function abrirFormulario(modo) {
     modoAtual = modo;
+    var modal = document.getElementById("modalLanchonete");
+    
+    // Limpa os campos toda vez que abre
     document.getElementById("inputUsuario").value = "";
     document.getElementById("inputSenha").value = "";
     document.getElementById("erroUsuario").textContent = "";
     document.getElementById("erroSenha").textContent = "";
     document.getElementById("erroGeral").textContent = "";
+    
+    // Altera o título de acordo com o modo
     document.getElementById("tituloModal").textContent = (modo === "login") ? "🔑 Login" : "📝 Cadastro";
-    modal.style.display = "flex";
+    
+    if(modal) modal.style.display = "flex";
 }
 
-function fecharModal() { modal.style.display = "none"; }
+function fecharModal() {
+    var modal = document.getElementById("modalLanchonete");
+    if(modal) modal.style.display = "none";
+}
 
 function confirmarFormulario() {
     var usuario = document.getElementById("inputUsuario").value.trim();
@@ -119,7 +110,11 @@ function confirmarFormulario() {
     var erroS = document.getElementById("erroSenha");
     var erroG = document.getElementById("erroGeral");
 
-    erroU.textContent = erroS.textContent = erroG.textContent = "";
+    // Zera erros antes de testar
+    erroU.textContent = "";
+    erroS.textContent = "";
+    erroG.textContent = "";
+    
     if (usuario === "" || senha === "") {
         if (usuario === "") erroU.textContent = "⚠ Preencha o usuário!";
         if (senha === "") erroS.textContent = "⚠ Preencha a senha!";
@@ -133,7 +128,7 @@ function confirmarFormulario() {
         } else {
             erroG.textContent = "❌ Usuário ou senha incorretos!";
         }
-    } else {
+    } else if (modoAtual === "cadastro") {
         if (senha.length < 4) {
             erroS.textContent = "⚠ A senha deve ter pelo menos 4 caracteres!";
             return;
@@ -143,23 +138,28 @@ function confirmarFormulario() {
     }
 }
 
-// Funções do Menu e Navegação
 function toggleMenu() {
     var menu = document.getElementById("menuNav");
-    menu.style.display = (menu.style.display === "none") ? "block" : "none";
+    if(menu) {
+        menu.style.display = (menu.style.display === "none") ? "block" : "none";
+    }
 }
 
+// Fecha o menu hamburguer se o usuário clicar fora dele
 document.addEventListener("click", function (e) {
     var menuDiv = document.getElementById("menuHamburguer");
-    if (menuDiv && !menuDiv.contains(e.target)) {
-        document.getElementById("menuNav").style.display = "none";
+    var menuNav = document.getElementById("menuNav");
+    if (menuDiv && menuNav && !menuDiv.contains(e.target) && menuNav.style.display === "block") {
+        menuNav.style.display = "none";
     }
 });
 
 function irPara(id) {
     var elemento = document.getElementById(id);
     if (elemento) elemento.scrollIntoView({ behavior: "smooth" });
-    document.getElementById("menuNav").style.display = "none";
+    
+    var menuNav = document.getElementById("menuNav");
+    if(menuNav) menuNav.style.display = "none";
 }
 
 function ativarSecao(id) {
@@ -173,5 +173,7 @@ function ativarSecao(id) {
 function desativarSecao(id) {
     var secao = document.getElementById(id);
     if (secao) secao.style.display = "none";
-    document.getElementById("menuNav").style.display = "none";
+    
+    var menuNav = document.getElementById("menuNav");
+    if(menuNav) menuNav.style.display = "none";
 }
