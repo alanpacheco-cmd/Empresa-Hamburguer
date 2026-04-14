@@ -2,37 +2,28 @@
 var usuarioCorreto = "admin";
 var senhaCorreta = "1234";
 var modoAtual = "";
+var usuarioLogado = false; // Controla se o cliente já fez login
 
 // --- 2. GARANTIR QUE TUDO CARREGUE NA HORA CERTA ---
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Faz os botões da página funcionarem
-    var botoes = document.querySelectorAll(".btn-personalizado");
-    if (botoes.length >= 2) {
-        botoes[0].addEventListener("click", function () { abrirFormulario("login"); });
-        botoes[1].addEventListener("click", function () { abrirFormulario("cadastro"); });
-    } else {
-        console.warn("Aviso: Botões '.btn-personalizado' não encontrados na página.");
+    // --- A. LÓGICA DE LOGIN E BOTÕES ---
+    // Faz os botões do cabeçalho funcionarem (Login e Cadastro)
+    var botoesCabecalho = document.querySelectorAll(".login .btn-personalizado");
+    if (botoesCabecalho.length >= 2) {
+        botoesCabecalho[0].addEventListener("click", function () { abrirFormulario("login"); });
+        botoesCabecalho[1].addEventListener("click", function () { abrirFormulario("cadastro"); });
     }
 
-    // Adiciona IDs nas divs para o scroll do menu funcionar
-    var divComeco = document.querySelector(".comeco");
-    if (divComeco) divComeco.id = "inicio";
-    var divCardapio = document.querySelector(".cardapio");
-    if (divCardapio) divCardapio.id = "cardapio";
+    // Faz os botões "Comprar" exigirem autenticação
+    var botoesComprar = document.querySelectorAll(".item1 .btn-personalizado");
+    botoesComprar.forEach(function(botao) {
+        botao.addEventListener("click", function() {
+            tentarComprar();
+        });
+    });
 
-    // --- CRIAÇÃO DOS ELEMENTOS DINÂMICOS ---
-    
-    // Estilos do menu e promoções
-    var estiloGeral = document.createElement("style");
-    estiloGeral.textContent = `
-        .link-nav { display: block; color: beige; font-family: 'Luckiest Guy', cursive; font-size: 15px; padding: 6px 8px; cursor: pointer; border-radius: 5px; }
-        .link-nav:hover { background: rgba(255,255,255,0.15); }
-        #promo { display: none; background: maroon; border: 2px solid whitesmoke; border-radius: 10px; padding: 20px 40px; margin: 20px auto; max-width: 500px; color: beige; font-family: 'Luckiest Guy', cursive; text-align: center; }
-    `;
-    document.head.appendChild(estiloGeral);
-
-    // Modal de Login e Cadastro
+    // Criação do Modal de Login e Cadastro (oculto por padrão)
     var modal = document.createElement("div");
     modal.id = "modalLanchonete";
     modal.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;";
@@ -52,7 +43,23 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
     document.body.appendChild(modal);
 
-    // Menu Hambúrguer
+    // --- B. LÓGICA DE NAVEGAÇÃO E MENU ---
+    // Adiciona IDs nas divs para o scroll do menu funcionar (Início e Cardápio)
+    var divComeco = document.querySelector(".comeco");
+    if (divComeco) divComeco.id = "inicio";
+    var divCardapio = document.querySelector(".cardapio");
+    if (divCardapio) divCardapio.id = "cardapio";
+
+    // Estilos extras injetados para o menu e promoções
+    var estiloGeral = document.createElement("style");
+    estiloGeral.textContent = `
+        .link-nav { display: block; color: beige; font-family: 'Luckiest Guy', cursive; font-size: 15px; padding: 6px 8px; cursor: pointer; border-radius: 5px; }
+        .link-nav:hover { background: rgba(255,255,255,0.15); }
+        #promo { display: none; background: maroon; border: 2px solid whitesmoke; border-radius: 10px; padding: 20px 40px; margin: 20px auto; max-width: 500px; color: beige; font-family: 'Luckiest Guy', cursive; text-align: center; }
+    `;
+    document.head.appendChild(estiloGeral);
+
+    // Criação do Menu Hambúrguer flutuante
     var menuHamburguer = document.createElement("div");
     menuHamburguer.id = "menuHamburguer";
     menuHamburguer.style.cssText = "position: fixed; top: 10px; right: 10px; z-index: 8000;";
@@ -67,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
     document.body.appendChild(menuHamburguer);
 
-    // Seção de Promoções
+    // Criação da Seção de Promoções (oculta por padrão)
     var secaoPromo = document.createElement("div");
     secaoPromo.id = "promo";
     secaoPromo.innerHTML = `
@@ -79,20 +86,32 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(secaoPromo);
 });
 
-// --- 3. FUNÇÕES (Lógica do Modal e Navegação) ---
+
+// --- 3. FUNÇÕES GERAIS ---
+
+// ================= Lógica de Compras e Login ================= //
+
+function tentarComprar() {
+    if (usuarioLogado) {
+        alert("🍔 Pedido confirmado! Seu lanche já vai ser preparado.");
+    } else {
+        alert("⚠ Ops! Você precisa fazer login primeiro para fazer um pedido.");
+        abrirFormulario("login");
+    }
+}
 
 function abrirFormulario(modo) {
     modoAtual = modo;
     var modal = document.getElementById("modalLanchonete");
     
-    // Limpa os campos toda vez que abre
+    // Reseta o formulário
     document.getElementById("inputUsuario").value = "";
     document.getElementById("inputSenha").value = "";
     document.getElementById("erroUsuario").textContent = "";
     document.getElementById("erroSenha").textContent = "";
     document.getElementById("erroGeral").textContent = "";
     
-    // Altera o título de acordo com o modo
+    // Troca o título
     document.getElementById("tituloModal").textContent = (modo === "login") ? "🔑 Login" : "📝 Cadastro";
     
     if(modal) modal.style.display = "flex";
@@ -110,7 +129,6 @@ function confirmarFormulario() {
     var erroS = document.getElementById("erroSenha");
     var erroG = document.getElementById("erroGeral");
 
-    // Zera erros antes de testar
     erroU.textContent = "";
     erroS.textContent = "";
     erroG.textContent = "";
@@ -122,9 +140,10 @@ function confirmarFormulario() {
     }
 
     if (modoAtual === "login") {
-        if (usuario === usuarioCorreto && senha === senhaCorreta) {
+        if (usuario === usuarioCorreto && senha === senhaCorreta) { // admin e 1234
+            usuarioLogado = true;
             fecharModal();
-            alert("✅ Login realizado! Bem-vindo, " + usuario + "!");
+            alert("✅ Login realizado! Bem-vindo, " + usuario + "! Agora você já pode fazer seus pedidos.");
         } else {
             erroG.textContent = "❌ Usuário ou senha incorretos!";
         }
@@ -133,10 +152,13 @@ function confirmarFormulario() {
             erroS.textContent = "⚠ A senha deve ter pelo menos 4 caracteres!";
             return;
         }
+        usuarioLogado = true; 
         fecharModal();
-        alert("✅ Cadastro realizado! Olá, " + usuario + "!");
+        alert("✅ Cadastro realizado! Olá, " + usuario + "! Agora você pode pedir à vontade.");
     }
 }
+
+// ================= Lógica de Navegação do Menu ================= //
 
 function toggleMenu() {
     var menu = document.getElementById("menuNav");
@@ -145,7 +167,7 @@ function toggleMenu() {
     }
 }
 
-// Fecha o menu hamburguer se o usuário clicar fora dele
+// Oculta o menu ao clicar fora dele
 document.addEventListener("click", function (e) {
     var menuDiv = document.getElementById("menuHamburguer");
     var menuNav = document.getElementById("menuNav");
@@ -158,6 +180,7 @@ function irPara(id) {
     var elemento = document.getElementById(id);
     if (elemento) elemento.scrollIntoView({ behavior: "smooth" });
     
+    // Fecha o menu após o clique
     var menuNav = document.getElementById("menuNav");
     if(menuNav) menuNav.style.display = "none";
 }
