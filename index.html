@@ -12,50 +12,135 @@
 
 <header class="topo">
   <div class="logo-area">
-    <img src="https://via.placeholder.com/60" class="logo" alt="Logo">
+    <img src="https://placehold.co/60x60/ff4d4d/ffffff?text=HS" class="logo" alt="Logo Hot Station">
     <h1>Hot Station</h1>
   </div>
 
   <div class="login">
-    <button class="btn">Login</button>
-    <button class="btn">Cadastro</button>
+    <span id="usuarioTexto"></span>
+    <button class="btn" id="btnLogin">Login</button>
+    <button class="btn" id="btnCadastro">Cadastro</button>
+    <button class="btn-ajuda" data-ajuda="conta" title="Ajuda">?</button>
     <input id="busca" type="text" placeholder="Buscar hambúrguer">
+    <button class="btn-ajuda" data-ajuda="busca" title="Ajuda">?</button>
   </div>
 </header>
 
-<h2>Cardápio</h2>
+<h2>Hambúrgueres <button class="btn-ajuda" data-ajuda="comprar" title="Ajuda">?</button></h2>
 
-<section class="cardapio">
+<section class="cardapio" id="listaHamburgueres">
 
   <div class="item">
-    <img src="https://via.placeholder.com/300x150" alt="X-Salada">
-    <h3>X-Salada</h3>
+    <img src="https://img.magnific.com/psd-gratuitas/delicioso-cheeseburger-de-bacon-com-queijo-derretido-e-bacon-crocante_84443-79381.jpg?semt=ais_hybrid&w=740&q=80" alt="X-Bacon">
+    <h3>X-Bacon</h3>
     <p class="preco">R$ 25,00</p>
     <button class="btn comprar">Comprar</button>
   </div>
 
   <div class="item">
-    <img src="https://via.placeholder.com/300x150" alt="X-Burguer">
-    <h3>X-Burguer</h3>
+    <img src="https://img.magnific.com/psd-gratuitas/delicioso-cheeseburger-de-bacon-com-queijo-derretido-e-bacon-crocante_84443-79381.jpg?semt=ais_hybrid&w=740&q=80" alt="X-Tudo">
+    <h3>X-Tudo</h3>
     <p class="preco">R$ 30,00</p>
     <button class="btn comprar">Comprar</button>
   </div>
 
   <div class="item">
-    <img src="https://via.placeholder.com/300x150" alt="X-Alcatra">
-    <h3>X-Alcatra</h3>
+    <img src="https://imagens.jotaja.com/produtos/159cd197-8f99-417f-9c1a-745b496df6d5.jpg" alt="X-Frango">
+    <h3>X-Frango</h3>
     <p class="preco">R$ 20,00</p>
     <button class="btn comprar">Comprar</button>
   </div>
 
   <div class="item">
-    <img src="https://via.placeholder.com/300x150" alt="X-Coração">
-    <h3>X-Coração</h3>
+    <img src="https://imagens.jotaja.com/produtos/4343/911A25DE04024DA78E6AC28669A73E7422B8F8C2B99ACD0E6BE7FD96A37B5649.jpeg" alt="X-Egg">
+    <h3>X-Egg</h3>
     <p class="preco">R$ 28,00</p>
     <button class="btn comprar">Comprar</button>
   </div>
 
 </section>
+
+<p id="semResultado" class="sem-resultado">Nenhum hambúrguer encontrado.</p>
+
+<h2>Acompanhamentos</h2>
+
+<section class="cardapio">
+
+  <div class="item">
+    <img src="https://static.vecteezy.com/system/resources/thumbnails/037/499/240/small/ai-generated-french-fried-chips-free-png.png" alt="Batata Frita">
+    <h3>Batata Frita</h3>
+    <p class="preco">R$ 12,00</p>
+    <button class="btn comprar">Comprar</button>
+  </div>
+
+</section>
+
+<h2>Bebidas</h2>
+
+<section class="cardapio">
+
+  <div class="item">
+    <img src="https://andinacocacola.vtexassets.com/arquivos/ids/157652/110255_COCA---CCO220ml.jpg?v=639094449080200000" alt="Coca-Cola">
+    <h3>Coca-Cola</h3>
+    <p class="preco">R$ 6,00</p>
+    <button class="btn comprar">Comprar</button>
+  </div>
+
+  <div class="item">
+    <img src="https://i.pinimg.com/736x/42/0c/a6/420ca69ac6462619d8b6e9e98e46edac.jpg" alt="Guaraná">
+    <h3>Guaraná</h3>
+    <p class="preco">R$ 6,00</p>
+    <button class="btn comprar">Comprar</button>
+  </div>
+
+  <div class="item">
+    <img src="https://www.imigrantesbebidas.com.br/img/bebida/images/products/full/2893-agua-mineral-crystal-sem-gas-500ml.jpg?s=398bafb7b2c759cb3a1bbd6927c25023" alt="Água Mineral">
+    <h3>Água Mineral</h3>
+    <p class="preco">R$ 4,00</p>
+    <button class="btn comprar">Comprar</button>
+  </div>
+
+</section>
+
+<div class="carrinho">
+  <h3>Seu Carrinho <button class="btn-ajuda" data-ajuda="carrinho" title="Ajuda">?</button></h3>
+  <div id="carrinhoItens"></div>
+  <p class="carrinho-total">Total: R$ <span id="carrinhoTotal">0,00</span></p>
+  <button id="btnFinalizar" class="btn btn-finalizar">Finalizar Pedido via WhatsApp</button>
+</div>
+
+<!-- Janela de Login -->
+<div class="overlay" id="overlayLogin">
+  <div class="modal-box">
+    <button class="fechar" data-fechar="overlayLogin">&times;</button>
+    <h3>Login</h3>
+    <form id="formLogin">
+      <input type="email" id="loginEmail" placeholder="E-mail" required>
+      <input type="password" id="loginSenha" placeholder="Senha" required>
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Janela de Cadastro -->
+<div class="overlay" id="overlayCadastro">
+  <div class="modal-box">
+    <button class="fechar" data-fechar="overlayCadastro">&times;</button>
+    <h3>Criar Conta</h3>
+    <form id="formCadastro">
+      <input type="text" id="cadNome" placeholder="Nome" required>
+      <input type="email" id="cadEmail" placeholder="E-mail" required>
+      <input type="password" id="cadSenha" placeholder="Senha" required>
+      <button type="submit" class="btn">Cadastrar</button>
+    </form>
+  </div>
+</div>
+
+<footer class="rodape">
+  <p>Hot Station — Hambúrgueres Artesanais</p>
+  <p>📞 (47) 98914-5041</p>
+  <p>Desenvolvido por: Alan, Vinicius, Cauã e Pedro</p>
+</footer>
 
 <script src="script.js"></script>
 </body>

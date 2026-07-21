@@ -29,12 +29,14 @@ body {
   margin-right: 10px;
   width: 60px;
   height: 60px;
+  border-radius: 50%;
 }
 
 .login {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 #busca {
@@ -67,6 +69,29 @@ body {
 
 .btn:active {
   transform: translateY(0);
+}
+
+/* Botão de ajuda (?) */
+.btn-ajuda {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #666;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-ajuda:hover {
+  background: #ff4d4d;
+}
+
+/* Usuário logado */
+#usuarioTexto {
+  cursor: pointer;
+  font-weight: bold;
 }
 
 /* Cardápio */
@@ -105,9 +130,11 @@ h2 {
 
 .item img {
   width: 100%;
-  height: 150px;
+  height: 160px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain; /* Ajusta a imagem mantendo a proporção correta sem cortar */
+  background-color: #fafafa; /* Fundo suave para imagens com fundo transparente */
+  padding: 5px;
 }
 
 .item h3 {
@@ -125,6 +152,13 @@ h2 {
 .item .btn {
   width: 100%;
   margin-top: 10px;
+}
+
+.sem-resultado {
+  display: none;
+  text-align: center;
+  color: #999;
+  margin: 10px 0 20px;
 }
 
 /* Carrinho */
@@ -158,11 +192,100 @@ h2 {
   font-size: 14px;
 }
 
+.carrinho-vazio {
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+}
+
+.remover-item {
+  color: #ff4d4d;
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
 .carrinho-total {
   margin-top: 15px;
   font-weight: bold;
   font-size: 18px;
   color: #ff4d4d;
+}
+
+.btn-finalizar {
+  width: 100%;
+  margin-top: 15px;
+  background: #25d366;
+}
+
+.btn-finalizar:hover {
+  background: #1eb854;
+}
+
+/* Login e Cadastro (janelas) */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.overlay.ativo {
+  display: flex;
+}
+
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 320px;
+  position: relative;
+}
+
+.modal-box h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-box .btn {
+  width: 100%;
+}
+
+.fechar {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Rodapé */
+.rodape {
+  text-align: center;
+  padding: 20px;
+  background: #111;
+  color: #ccc;
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+.rodape p {
+  margin: 4px 0;
 }
 
 /* Responsivo */
@@ -190,7 +313,7 @@ h2 {
   .carrinho {
     position: static;
     width: 100%;
-    margin: 20px;
+    margin: 20px 0;
     border-left: none;
     border-top: 4px solid #ff4d4d;
   }
